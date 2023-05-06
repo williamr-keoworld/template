@@ -34,6 +34,10 @@ env:
   THE_WIP: ${{ secrets[format('WORKLOAD_IDENTITY_PROVIDER_{0}', github.event.inputs.environment)] }}
   APPLY: ${{ github.event.inputs.applying }}
   CONFIRMATION: ${{ github.event.inputs.confirm_apply }}
+  GIT_SSH_COMMAND: "echo '${{ secrets.SSH_PRIVATE_KEY }}' > id_rsa
+    && ssh-keyscan github.com > known_hosts
+    && chmod 600 id_rsa known_hosts
+    && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 
 jobs:
   terraform:
@@ -71,6 +75,7 @@ jobs:
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
+          git config --global url."https://oauth2:${{ secrets.GIT_ACCESS_TOKEN }}@github.com".insteadOf https://github.com
           echo 'bucket="${{ steps.toLowerCase.outputs.lowerCaseValue }}"' > config.tfbackend
           echo 'prefix="${{ env.PROJECT_NAME }}"' >> config.tfbackend
           cat config.tfbackend
