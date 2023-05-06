@@ -33,7 +33,7 @@ env:
   THE_WIP: ${{ secrets[format('WORKLOAD_IDENTITY_PROVIDER_{0}', github.event.inputs.environment)] }}
   APPLY: ${{ github.event.inputs.applying }}
   CONFIRMATION: ${{ github.event.inputs.confirm_apply }}
-  
+
 jobs:
   terraform:
     permissions:
@@ -50,7 +50,7 @@ jobs:
     steps:
       - id: toLowerCase
         run: echo "lowerCaseValue=$(echo "${{ env.BUCKET_BACKEND }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-        
+
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
@@ -70,7 +70,6 @@ jobs:
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
-          # Go to the project directory
           echo 'bucket="${{ steps.toLowerCase.outputs.lowerCaseValue }}"' > config.tfbackend
           echo 'prefix="${{ env.PROJECT_DIR }}"' >> config.tfbackend
           cat config.tfbackend
