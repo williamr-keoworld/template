@@ -7,7 +7,7 @@ data "google_compute_subnetwork" "subnet" {
 
 module "sql_instance_creation" {
   count                            = var.db_enabled[terraform.workspace] ? 1 : 0  
-  source                           = "https://github.com/Keoworld/tf_modules/tree/main/google/db/sql_instance"
+  source                           = "github.com/Keoworld/tf_modules/tree/main/google/db/sql_instance"
   name_engine_id                   = var.engine_prefix["postgresql"]
   name_project_id                  = local.business_app
   name_service_id                  = "operation"
