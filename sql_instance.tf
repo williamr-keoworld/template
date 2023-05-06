@@ -5,9 +5,16 @@ data "google_compute_subnetwork" "subnet" {
   project = var.db_subnet_project_id[terraform.workspace]
 }
 
+variable "PAT" {
+  type        = string
+  description = "Personal Access Token for accessing the private module repository"
+  sensitive  = true
+}
+
 module "sql_instance_creation" {
-  count                            = var.db_enabled[terraform.workspace] ? 1 : 0  
+  count                            = var.db_enabled[terraform.workspace] ? 1 : 0
   source          = "git::https://${env.PAT}@github.com/Keoworld/tf_modules/google/db/sql_instance"
+  # source          = "git::https://${env.PAT}@github.com/Keoworld/tf_modules/google/db/sql_instance"
   name_engine_id                   = var.engine_prefix["postgresql"]
   name_project_id                  = local.business_app
   name_service_id                  = "operation"
@@ -23,6 +30,9 @@ module "sql_instance_creation" {
   db_multi_az                      = var.db_multi_az_map[terraform.workspace]
   db_private_network               = "projects/${var.db_subnet_project_id[terraform.workspace]}/global/networks/${var.db_network_name[terraform.workspace]}"
   db_subnetwork                    = data.google_compute_subnetwork.subnet.self_link
+  env = {
+    GIT_ASKPASS = "echo ${var.PAT}"
+  }
   depends_on = [
     google_project_service.enable-services
   ]
