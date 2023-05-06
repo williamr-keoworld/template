@@ -71,7 +71,7 @@ jobs:
       - name: Terraform Init
         run: |
           echo 'bucket="${{ steps.toLowerCase.outputs.lowerCaseValue }}"' > config.tfbackend
-          echo 'prefix="${{ env.PROJECT_DIR }}"' >> config.tfbackend
+          echo 'prefix="${{ env.PROJECT_NAME }}"' >> config.tfbackend
           cat config.tfbackend
           terraform init -backend-config=config.tfbackend
 
