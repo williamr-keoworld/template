@@ -1,0 +1,108 @@
+First Time login to gcloud CLI
+
+gcloud auth login
+
+Application Default Credentials (ADC) provide a method to get credentials used in calling Google APIs.
+
+gcloud auth application-default login
+
+Now lets create the bucket for our state file
+
+terraform init -backend=false
+terraform workspace select default
+
+terraform apply --target=module.bucket-backend -auto-approve  \
+-var="project_name=keo-rails"
+
+sed -i "s|####||" _init.tf
+
+terraform init -migrate-state -force-copy \
+-backend-config="bucket=ab-keo-rails-tfstate" \
+-backend-config="credentials=/home/brunomorais/.config/gcloud/ab-terraform-states-brunoneves.json"
+
+terraform state rm module.bucket-backend
+rm -f terraform.tfstate*
+
+
+
+Lets Create workspaces
+
+terraform workspace new dev
+terraform workspace new qa
+terraform workspace new stg
+terraform workspace new pro
+
+Now that state file is in the bucket, lets login to the customer account
+
+gcloud auth login
+gcloud auth application-default login
+
+terraform init \
+-backend-config="bucket=ab-keo-rails-tfstate" \
+-backend-config="credentials=/home/brunomorais/.config/gcloud/ab-terraform-states-brunoneves.json"
+
+
+
+Lets Provision Infra now
+
+terraform workspace select dev
+
+terraform apply --target=google_project.ab-project -auto-approve  \
+-var="project_name=keo-rails" 
+terraform apply --target=google_project_service.ab-project-service -auto-approve  \
+-var="project_name=keo-rails" 
+
+terraform workspace select staging
+
+terraform apply --target=google_project.ab-project -auto-approve  \
+-var="project_name=keo-rails"
+terraform apply --target=google_project_service.ab-project-service -auto-approve  \
+-var="project_name=keo-rails" 
+
+terraform workspace select prod
+
+terraform apply --target=google_project.ab-project -auto-approve  \
+-var="project_name=keo-rails"
+terraform apply --target=google_project_service.ab-project-service -auto-approve  \
+-var="project_name=keo-rails" 
+
+terraform workspace select dev
+
+terraform init \
+-backend-config="bucket=ab-keo-rails-tfstate" \
+-backend-config="credentials=/home/brunomorais/.config/gcloud/ab-terraform-states-brunoneves.json"
+
+terraform plan --out plan.tfplan \
+-var="project_name=keo-rails"
+
+terraform apply plan.tfplan
+
+
+
+Utils
+==========
+
+Check the Project ID with
+
+gcloud projects list
+
+terraform destroy \
+-var="project_name=keo-rails" 
+
+to get kubeconfig you need to install gke-gcloud-auth-plugin. So you can run:
+
+gcloud components install gke-gcloud-auth-plugin
+
+or in Ubuntu/Debian
+
+sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+
+After gke-gcloud-auth-plugin is installed, you can get kubeconfig
+
+gcloud container clusters get-credentials CLUSTER_NAME --zone ZONE --project PROJECT_NAME
+
+To generate the external secrets aut gor ADM
+
+gcloud iam service-accounts keys create key.json --iam-account=SERVICE_ACCOUNT
+kubectl create secret generic cloud-credentials --from-file=secret-access-credentials=key.json
+rm -fr key.json
