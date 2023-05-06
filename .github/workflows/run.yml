@@ -89,6 +89,5 @@ jobs:
       - name: Apply
         if: ${{ env.APPLY== 'YES' && env.CONFIRMATION == 'YES' }}
         run: |
-          cd projects/${{ env.PROJECT_DIR }}
           terraform workspace select ${{ env.THE_WORKSPACE }}
           terraform apply -auto-approve -input=false
