@@ -26,7 +26,6 @@ on:
         required: true
 
 env:
-  PAT: ${{ secrets.GIT_ACCESS_TOKEN }}
   BUCKET_BACKEND: ${{ format('terraform-for-remote-state-{0}', github.event.inputs.environment) }}
   PROJECT_NAME: "workeo-mex"
   THE_WORKSPACE: ${{ github.event.inputs.environment }}
@@ -34,10 +33,6 @@ env:
   THE_WIP: ${{ secrets[format('WORKLOAD_IDENTITY_PROVIDER_{0}', github.event.inputs.environment)] }}
   APPLY: ${{ github.event.inputs.applying }}
   CONFIRMATION: ${{ github.event.inputs.confirm_apply }}
-  GIT_SSH_COMMAND: "echo '${{ secrets.SSH_PRIVATE_KEY }}' > id_rsa
-    && ssh-keyscan github.com > known_hosts
-    && chmod 600 id_rsa known_hosts
-    && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 
 jobs:
   terraform:
@@ -76,8 +71,6 @@ jobs:
       - name: Terraform Init
         run: |
           git config --global url."https://oauth2:${{ secrets.GIT_ACCESS_TOKEN }}@github.com".insteadOf https://github.com
-          # git config --global url."https://oauth2:${secrets.GIT_ACCESS_TOKEN}@gitlab.com".insteadOf 
-
           echo 'bucket="${{ steps.toLowerCase.outputs.lowerCaseValue }}"' > config.tfbackend
           echo 'prefix="${{ env.PROJECT_NAME }}"' >> config.tfbackend
           cat config.tfbackend
