@@ -76,6 +76,8 @@ jobs:
       - name: Terraform Init
         run: |
           git config --global url."https://oauth2:${{ secrets.GIT_ACCESS_TOKEN }}@github.com".insteadOf https://github.com
+          # git config --global url."https://oauth2:${secrets.GIT_ACCESS_TOKEN}@gitlab.com".insteadOf 
+
           echo 'bucket="${{ steps.toLowerCase.outputs.lowerCaseValue }}"' > config.tfbackend
           echo 'prefix="${{ env.PROJECT_NAME }}"' >> config.tfbackend
           cat config.tfbackend
