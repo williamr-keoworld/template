@@ -11,7 +11,6 @@ resource "google_project" "keo-project" {
   project_id      = local.project_id
   folder_id       = local.folder_id
   billing_account = local.billing_account
-  #labels            = local.this_project_labels
 }
 
 resource "google_project_service" "enable-services" {
