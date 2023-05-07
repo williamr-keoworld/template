@@ -94,6 +94,17 @@ variable "google_zone_map" {
   }
 }
 
+variable "app_engine_enabled" {
+  type        = map(any)
+  description = "App engine is enabled"
+  default = {
+    DEV = true
+    QA  = true
+    STG = true
+    PRO = true
+  }
+}
+
 # Apis to be enabled in the project by environment
 variable "google_services_map" {
   description = "Google service APIs to activate per environment"

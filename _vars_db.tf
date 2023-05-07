@@ -39,9 +39,9 @@ variable "db_instance_tier_map" {
 variable "db_disk_autoresize_map" {
   type = map(any)
   default = {
-    DEV = true
-    QA  = true
-    STG = true
+    DEV = false
+    QA  = false
+    STG = false
     PRO = true
   }
 }
@@ -51,7 +51,7 @@ variable "db_disk_size_map" {
     DEV = 10
     QA  = 10
     STG = 10
-    PRO = 10
+    PRO = 20
   }
 }
 variable "db_disk_autoresize_limite_map" {
@@ -85,8 +85,8 @@ variable "db_multi_az_map" {
   type = map(any)
   default = {
     DEV = false
-    QA  = true
-    STG = true
+    QA  = false
+    STG = false
     PRO = true
   }
 }
