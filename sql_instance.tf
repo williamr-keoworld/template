@@ -23,9 +23,7 @@ module "sql_instance_creation" {
   db_multi_az                      = var.db_multi_az_map[terraform.workspace]
   db_private_network               = "projects/${var.db_subnet_project_id[terraform.workspace]}/global/networks/${var.db_network_name[terraform.workspace]}"
   db_subnetwork                    = data.google_compute_subnetwork.subnet.self_link
-  env = {
-    GIT_ASKPASS = "echo ${var.PAT}"
-  }
+
   depends_on = [
     google_project_service.enable-services
   ]
