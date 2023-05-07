@@ -5,12 +5,6 @@ data "google_compute_subnetwork" "subnet" {
   project = var.db_subnet_project_id[terraform.workspace]
 }
 
-variable "PAT" {
-  type        = string
-  description = "Personal Access Token for accessing the private module repository"
-  sensitive  = true
-}
-
 module "sql_instance_creation" {
   count                            = var.db_enabled[terraform.workspace] ? 1 : 0
   source                           = "git::https://github.com/Keoworld/tf_modules.git//google/db/sql_instance"
