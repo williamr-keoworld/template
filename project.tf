@@ -1,23 +1,23 @@
 locals {
-  this_project_labels = merge(local.general_default_labels , {
+  this_project_labels = merge(local.general_default_labels, {
   })
-  this_project_services = concat(var.google_services_map[terraform.workspace], 
-  []
+  this_project_services = concat(var.google_services_map[terraform.workspace],
+    []
   )
 }
 
 resource "google_project" "keo-project" {
-  name              = join ("-", [local.project_base_name, var.env_id[terraform.workspace]])
-  project_id        = local.project_id
-  folder_id         = local.folder_id
-  billing_account   = local.billing_account
+  name            = join("-", [local.project_base_name, var.env_id[terraform.workspace]])
+  project_id      = local.project_id
+  folder_id       = local.folder_id
+  billing_account = local.billing_account
   #labels            = local.this_project_labels
 }
 
 resource "google_project_service" "enable-services" {
-  project = join ("-", [local.project_base_name, var.env_id[terraform.workspace]])
+  project  = join("-", [local.project_base_name, var.env_id[terraform.workspace]])
   for_each = toset(local.this_project_services)
-  service = each.key
+  service  = each.key
   timeouts {
     create = "30m"
     update = "40m"
