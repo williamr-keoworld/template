@@ -14,7 +14,7 @@ resource "google_project" "keo-project" {
 }
 
 resource "google_project_service" "enable-services" {
-  project  = join("-", [local.project_base_name, var.env_id[terraform.workspace]])
+  project  = google_project.keo-project.id
   for_each = toset(local.this_project_services)
   service  = each.key
   timeouts {

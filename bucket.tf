@@ -6,7 +6,7 @@ module "bucket_creation" {
   location      = var.google_region_map["primary"]
   force_destroy = var.force_destroy
   storage_class = var.storage_class["standard"]
-  project_id    = local.project_id
+  project_id    = google_project.keo-project.id
   versioning    = var.versioning
   bucket_labels = local.general_default_labels
 }
